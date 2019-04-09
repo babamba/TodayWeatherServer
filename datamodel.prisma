@@ -1,0 +1,159 @@
+# 느낌표는 필수 일때 
+# unique 는 fk pk
+# 배열은 해당 요소 여러개 일때 
+# 데이터 모델 자기자신에대해 관계형성이 가능
+
+# mutation create 사용자를 생성하는거
+# connect 생성된 사용자가 있으면 연결
+# disconnect 
+
+
+#datamodel.prisma 는 db에 동기화될 테이블 필드 만 동기화하면된다
+# fragment 를 위한 type들을 위해 deploy 할필욘없음
+
+type User {
+  id: ID! @unique
+  avatar: String
+  username: String! @unique
+  email: String! @unique
+  firstName: String @default(value: "")
+  lastName: String
+  bio: String
+  following: [User!]! @relation(name: "FollowRelation")
+  followers: [User!]! @relation(name: "FollowRelation")
+  posts: [Post!]! @relation(name: "PostsOfUser", onDelete: CASCADE)
+  likes: [Like!]! @relation(name: "LikesOfUser", onDelete: CASCADE)
+  comments: [Comment!]! @relation(name: "CommentsOfUser", onDelete: CASCADE)
+  rooms:[Room!]!
+  loginSecret:String
+}
+
+type Post {
+  id: ID! @unique
+  weather : String!
+  location: String
+  caption: String!
+  user: User @relation(name: "PostsOfUser")
+  files: [File!]! @relation(name:"FilesOfPost", onDelete:CASCADE)
+  likes: [Like!]! @relation(name:"LikeOfPost", onDelete:CASCADE)
+  comments: [Comment!]! @relation(name: "CommentOfPost", onDelete: CASCADE)
+}
+
+type Like {
+  id: ID! @unique
+  user: User @relation(name: "LikesOfUser")
+  post: Post @relation(name:"LikeOfPost")
+}
+
+type Comment {
+  id: ID! @unique
+  text: String!
+  user: User @relation(name: "CommentsOfUser")
+  post: Post @relation(name: "CommentOfPost")
+}
+
+type File {
+  id: ID! @unique
+  url: String!
+  post: Post @relation(name: "FilesOfPost")
+}
+
+type Room {
+  id: ID! @unique
+  participants: [User!]!
+  messages:[Message!]!
+}
+
+type Message {
+  id: ID! @unique
+  text: String! 
+  from: User!  @relation(name:"From")
+  to: User! @relation(name:"To")
+  room:Room!
+}
+
+
+# Write your query or mutation here
+# {
+#   users {
+#     id
+#   	username
+#     email
+#     firstName
+#     lastName
+#     bio
+    
+#   }
+# }
+# 유저생성
+# mutation{
+#   createUser(data:{
+#     username: "test"
+#     email: "test@test.com"
+#     firstName: "test"
+#     lastName: "user"
+#     bio: "gg"
+#   }){
+#     id
+#   }
+# }
+
+# 팔로잉 컬럼에 유저 connect 후 팔로잉한 상대의 id결과 리턴
+# mutation{
+#   updateUser(data:{following:{
+#     connect:{
+#       id: "cju28e0a06opd0b99i6paqbbi"
+#     }
+#   }}where:{id:"cju2a34do71mb0b999x0o6ne1"})
+#   {
+#     username
+#     email
+#     firstName
+#     lastName
+#     following{
+#     	id
+#   	}
+#   }
+# }
+
+
+# 팔로잉 컬럼에 유저 connect 후 팔로잉한 상대의 id결과 리턴
+# following과 follwer가 relationship이 되어있기 때문에 자동으로 
+# following한 사용자의 follower에 등록됨
+
+# mutation{
+#   updateUser(data:{
+#     following:{
+#       connect:{ id: "cju28e0a06opd0b99i6paqbbi"}}}
+#     	where:{id:"cju2a34do71mb0b999x0o6ne1"})
+#   {
+#     username
+#     email
+#     firstName
+#     lastName
+#     following{
+#     	id
+#   	}
+#     followers{
+#       id
+#     }
+#   }
+# }
+
+# {
+#   user(where:{id:"cju28e0a06opd0b99i6paqbbi"}){
+#     username
+#     followers{
+#       username
+#       lastName
+#       email
+#     }
+#     following{
+#       username
+#       lastName
+#       email
+#     }
+#     lastName
+#     firstName
+#   }
+# }

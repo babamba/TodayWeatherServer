@@ -1,0 +1,34 @@
+{
+  "name": "TodayWeatherServer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/babamba/TodayWeatherServer.git",
+  "author": "starlord <starlord@xhiftcorp.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.4.3",
+    "dotenv": "^7.0.0",
+    "graphql-tools": "^4.0.4",
+    "graphql-yoga": "^1.17.4",
+    "jsonwebtoken": "^8.5.1",
+    "merge-graphql-schemas": "^1.5.8",
+    "morgan": "^1.9.1",
+    "nodemailer": "^6.1.0",
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "prisma": "^1.30.0",
+    "prisma-client-lib": "^1.30.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.11"
+  },
+  "scripts": {
+    "dev": "nodemon --exec babel-node src/server.js",
+    "generate": "prisma generate",
+    "prisma": "yarn run deploy && yarn run generate",
+    "deploy": "prisma deploy"
+  }
+}
